@@ -1,0 +1,5 @@
+flask
+python-dotenv
+requests
+# mediapipe / dwpose / opencv-python / numpy serão adicionados
+# na etapa de implementação de pose.py, após a escolha do modelo

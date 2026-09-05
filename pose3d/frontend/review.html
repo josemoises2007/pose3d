@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Pose3D — Revisão</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.20.0/dist/tf.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/pose-detection@2.1.3"></script>
+  <!-- three.js via ES Modules (o build UMD "three.min.js" está deprecado
+       desde r150 e será removido no r160) -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <header>
+    <h1>Pose3D</h1>
+    <nav>
+      <a href="/">Dashboard</a>
+      <a href="/review.html" class="active">Revisão</a>
+    </nav>
+  </header>
+
+  <main id="review-main">
+    <div id="review-mode-banner">Modo: <span id="mode-label">carregando…</span></div>
+    <div id="review-error" style="display:none; color:#ff5252; margin: 8px 0;"></div>
+
+    <div class="review-columns">
+      <section id="image-panel">
+        <h2>Imagem + esqueleto 2D</h2>
+        <canvas id="pose-canvas" width="512" height="512"></canvas>
+        <p class="edit-hint">
+          Clique e arraste um ponto para movê-lo. Segure <b>Shift</b> e clique
+          em dois pontos para conectá-los, sem sair do modo de arrastar. Use os
+          botões abaixo para adicionar, remover ou conectar pontos manualmente.
+        </p>
+        <div class="edit-tools">
+          <button id="btn-add-point">Adicionar ponto</button>
+          <button id="btn-remove-point">Remover ponto</button>
+          <button id="btn-connect">Conectar pontos</button>
+        </div>
+      </section>
+
+      <section id="viewer-panel">
+        <h2>Visualização 3D</h2>
+        <div id="skeleton-3d-viewer"></div>
+      </section>
+    </div>
+
+    <div class="review-actions">
+      <button id="btn-approve">Aprovar</button>
+      <button id="btn-reject">Rejeitar</button>
+      <button id="btn-next">Próxima</button>
+    </div>
+    <div id="manual3dPanel" class="manual3d-panel">
+
+      <h2>Editor manual do esqueleto 3D</h2>
+
+      <p>
+        Se a detecção automática estiver errada, selecione um ponto
+        e ajuste sua posição X, Y e Z. A lista inclui automaticamente
+        qualquer ponto adicionado manualmente na imagem 2D.
+      </p>
+
+      <label for="joint3d">Ponto:</label>
+      <select id="joint3d"></select>
+
+      <div class="xyz">
+        <div>
+          <label>X</label>
+          <input id="posX" type="number" step="0.01">
+        </div>
+
+        <div>
+          <label>Y</label>
+          <input id="posY" type="number" step="0.01">
+        </div>
+
+        <div>
+          <label>Z</label>
+          <input id="posZ" type="number" step="0.01">
+        </div>
+      </div>
+
+      <button id="apply3d">
+        Aplicar posição
+      </button>
+
+      <button id="save3d">
+        Salvar esqueleto 3D
+      </button>
+
+      <div id="manual3dStatus"></div>
+
+    </div>
+  </main>
+  <style>
+    #pose-canvas {
+      background: #000;
+      cursor: crosshair;
+      max-width: 100%;
+    }
+
+    .edit-hint {
+      font-size: 12px;
+      opacity: 0.75;
+      max-width: 512px;
+    }
+
+    .edit-tools button.mode-active {
+      outline: 3px solid #ff5252;
+    }
+
+    #skeleton-3d-viewer {
+      width: 100%;
+      max-width: 480px;
+      height: 400px;
+      background: #161616;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .manual3d-panel {
+      background: #202020;
+      color: white;
+      padding: 15px;
+      margin-top: 15px;
+      border-radius: 8px;
+    }
+
+    .manual3d-panel h2 {
+      margin-top: 0;
+    }
+
+    .manual3d-panel select,
+    .manual3d-panel input {
+      background: #111;
+      color: white;
+      border: 1px solid #555;
+      padding: 7px;
+      border-radius: 4px;
+    }
+
+    .manual3d-panel select {
+      width: 100%;
+    }
+
+    .xyz {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .xyz input {
+      width: 100%;
+    }
+
+    .manual3d-panel button {
+      margin-top: 12px;
+      padding: 9px 15px;
+      cursor: pointer;
+    }
+
+    #manual3dStatus {
+      margin-top: 10px;
+      color: #8fd3ff;
+    }
+  </style>
+  <script src="/js/app.js"></script>
+</body>
+
+</html>
